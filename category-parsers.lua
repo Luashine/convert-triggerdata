@@ -1,3 +1,4 @@
+--- Holds rules that verify values to be generally correct
 verificationRulesLib = {}
 function verificationRulesLib.acceptAny()
 	return true
@@ -19,7 +20,7 @@ function verificationRulesLib.optionalString01(txt)
 	end
 end
 
-
+--- Holds value processors which convert values for digestible output
 valueProcessorsLib = {}
 function valueProcessorsLib.binToBoolean(txt)
 	if txt == "0" then
@@ -60,7 +61,7 @@ function valueProcessorsLib.translate(txt)
 	end
 end
 
-
+--- Holds functions that give values their names
 valueRenamerLib = {}
 function valueRenamerLib.displayText()
 	return "displayText"
@@ -95,6 +96,9 @@ end
 function valueRenamerLib.variableType()
 	return "variableType"
 end
+function valueRenamerLib.value()
+	return "value"
+end
 function valueRenamerLib.codeText()
 	return "codeText" -- same as "script text"
 end
@@ -116,7 +120,7 @@ function valueRenamerLib.triggerCallsArgNumbered(index)
 	return string.format("%s%d", txt, index - 3)
 end
 
--- A heavily parametrized function to avoid duplicating code for each parser
+--- A heavily parametrized function to avoid duplicating code for each parser
 -- Consider this a declarative parser at this point
 function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 	local name, valueText = line:match("([^=]+)=(.+)")
@@ -277,7 +281,7 @@ function category.TriggerTypeDefaults.parseLine(line)
 		[2] = valueProcessorsLib.translate,
 	}
 	local valueRenamer = {
-		[1] = valueRenamerLib.codeText
+		[1] = valueRenamerLib.codeText,
 		[2] = valueRenamerLib.prettyStringId
 	}
 
@@ -299,9 +303,9 @@ function category.TriggerParams.parseLine(line)
 		[4] = valueProcessorsLib.translate,
 	}
 	local valueRenamer = {
-		[1] = valueRenamerLib.minGameVersion
-		[2] = valueRenamerLib.variableType
-		[3] = valueRenamerLib.codeText
+		[1] = valueRenamerLib.minGameVersion,
+		[2] = valueRenamerLib.variableType,
+		[3] = valueRenamerLib.codeText,
 		[4] = valueRenamerLib.prettyStringId
 	}
 
@@ -394,3 +398,23 @@ function category.TriggerCalls.parseLine(line)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
+
+category.DefaultTriggerCategories = {}
+--- Barebones parser, input as is
+function category.DefaultTriggerCategories.parseLine(line)
+	local verificationRules = {
+		[1] = verificationRulesLib.acceptAny, -- appears to be name-specific
+	}
+	local valueProcessors = {
+		[1] = valueProcessorsLib.nop,
+	}
+	local valueRenamer = {
+		[1] = valueRenamerLib.value -- just call it value, apparently it's all flat lists
+	}
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
+category.DefaultTriggers = {}
+-- same parser
+category.DefaultTriggers.parseLine = category.DefaultTriggerCategories.parseLine
