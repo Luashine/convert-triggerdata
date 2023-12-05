@@ -137,6 +137,7 @@ function verificationRulesLib.optionalString01(txt)
 	end
 end
 
+
 valueProcessorsLib = {}
 function valueProcessorsLib.binToBoolean(txt)
 	if txt == "0" then
@@ -177,6 +178,7 @@ function valueProcessorsLib.translate(txt)
 	end
 end
 
+
 valueRenamerLib = {}
 function valueRenamerLib.displayText()
 	return "displayText"
@@ -205,8 +207,8 @@ end
 function valueRenamerLib.treatAsBaseType()
 	return "treatAsBaseType"
 end
-function valueRenamerLib.firstGameVersion()
-	return "firstGameVersion"
+function valueRenamerLib.minGameVersion()
+	return "minGameVersion"
 end
 function valueRenamerLib.variableType()
 	return "variableType"
@@ -223,7 +225,14 @@ end
 function valueRenamerLib.returnType()
 	return "returnType"
 end
-
+function valueRenamerLib.triggerEventsArgNumbered(index)
+	-- TriggerEvents arguments start at second index, so to make them 1-indexed substract 1
+	return string.format("%s%d", txt, index - 1)
+end
+function valueRenamerLib.triggerCallsArgNumbered(index)
+	-- TriggerCalls arguments start at fourth index, so to make them 1-indexed substract 3
+	return string.format("%s%d", txt, index - 3)
+end
 
 -- A heavily parametrized function to avoid duplicating code for each parser
 -- Consider this a declarative parser at this point
@@ -253,7 +262,8 @@ function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 		end
 
 		local valueProcessed = verificationRules[matchCount](match)
-		local valueName = valueRenamer[matchCount]()
+		local valueName = valueRenamer[matchCount](index) -- supply index to support parametrized functions
+
 		definition[valueName] = valueProcessed
 	end
 
@@ -326,7 +336,7 @@ function category.TriggerTypes(line)
 		[7] = valueProcessorsLib.binToBooleanDefault0,
 	}
 	local valueRenamer = {
-		[1] = valueRenamerLib.firstGameVersion,
+		[1] = valueRenamerLib.minGameVersion,
 		[2] = valueRenamerLib.canBeGlobalVar,
 		[3] = valueRenamerLib.allowComparisonOperators,
 		[4] = valueRenamerLib.prettyStringId,
@@ -406,7 +416,7 @@ function category.TriggerParams.parseLine(line)
 		[4] = valueProcessorsLib.translate,
 	}
 	local valueRenamer = {
-		[1] = valueRenamerLib.firstGameVersion
+		[1] = valueRenamerLib.minGameVersion
 		[2] = valueRenamerLib.variableType
 		[3] = valueRenamerLib.codeText
 		[4] = valueRenamerLib.prettyStringId
@@ -414,6 +424,94 @@ function category.TriggerParams.parseLine(line)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
+
+--- Returns a new __index function to remap a numeric range of indexes to one index
+---@param minIndex starting from this index (inclusive)
+---@param maxIndex ending with this index (inclusive)
+---@param remapToIndex point to this index
+function metatblFactory_IndexRemapper(minIndex, maxIndex, remapToIndex)
+	return function (t, key)
+		if type(key) == "number" and key >= minIndex and key <= maxIndex then
+			return t[remapToIndex]
+		else
+			return t[key]
+		end
+	end
+end
+
+category.TriggerEvents = {}
+function category.TriggerEvents.parseLine(line)
+	-- 32 is the max allowed Jass arguments
+	local mt_indexRemapper3_32_to_2 = {__index = metatblFactory_IndexRemapper(3, 32, 2)}
+
+	local verificationRules = {
+		[1] = verificationRulesLib.requireGameVersion,
+		[2] = verificationRulesLib.acceptAny,
+	}
+	setmetatable(verificationRules, mt_indexRemapper3_32_to_2)
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.intToGameVer,
+		[2] = valueProcessorsLib.nop
+	}
+	setmetatable(valueProcessors, mt_indexRemapper3_32_to_2)
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.minGameVersion,
+		[2] = valueRenamerLib.triggerEventsArgNumbered
+	}
+	setmetatable(valueRenamer, mt_indexRemapper3_32_to_2)
+
+	error("TODO: Secondary line extension")
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
+
+category.TriggerConditions = {}
+-- identical parent value definitions
+category.TriggerConditions.parseLine = category.TriggerEvents.parseLine
+
+
+category.TriggerActions = {}
+-- identical parent value definitions
+category.TriggerActions.parseLine = category.TriggerEvents.parseLine
+
+
+category.TriggerCalls = {}
+function category.TriggerCalls.parseLine(line)
+	-- 32 is the max allowed Jass arguments
+	local mt_indexRemapper5_32_to_4 = {__index = metatblFactory_IndexRemapper(5, 32, 4)}
+
+	local verificationRules = {
+		[1] = verificationRulesLib.requireGameVersion,
+		[2] = verificationRulesLib.requireString01,
+		[3] = verificationRulesLib.acceptAny,
+		[4] = verificationRulesLib.acceptAny,
+	}
+	setmetatable(verificationRules, mt_indexRemapper5_32_to_4)
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.intToGameVer,
+		[2] = valueProcessorsLib.binToBoolean,
+		[3] = valueProcessorsLib.acceptAny,
+		[4] = valueProcessorsLib.acceptAny
+	}
+	setmetatable(valueProcessors, mt_indexRemapper5_32_to_4)
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.minGameVersion,
+		[2] = valueRenamerLib.usableInEvents,
+		[3] = valueRenamerLib.returnType,
+		[4] = valueRenamerLib.triggerCallsArgNumbered
+	}
+	setmetatable(valueRenamer, mt_indexRemapper5_32_to_4)
+
+	error("TODO: Secondary line extension")
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
 
 function parseFile(fileH, dataOut)
 	local PATTERN_CATEGORY = "^\[([A-Za-z0-9]+)\]"
