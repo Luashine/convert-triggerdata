@@ -56,6 +56,7 @@ function parseFile(fileH, dataOut)
 				-- table may not exist only for ROOT_LEVEL
 				if not dataOut[categoryName] then dataOut[categoryName] = {} end
 				table.insert(dataOut[categoryName], lastEntry)
+				lastEntry = nil
 			end
 
 			categoryName = line:match(PATTERN_CATEGORY)
@@ -140,6 +141,7 @@ function parseFile(fileH, dataOut)
 			-- commit lastEntry first
 			if lastEntry then
 				table.insert(dataOut[categoryName], lastEntry)
+				lastEntry = nil
 			end
 
 			local entryName = line:match(PATTERN_ENTRY)
@@ -152,6 +154,12 @@ function parseFile(fileH, dataOut)
 			error("Unknown line format, line: '".. line .."'")
 		end
 
+	end
+
+	-- commit the final entry
+	if lastEntry then
+		table.insert(dataOut[categoryName], lastEntry)
+		lastEntry = nil
 	end
 end
 
