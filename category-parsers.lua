@@ -246,6 +246,7 @@ category.TriggerActions.parseLine = category.TriggerEvents.parseLine
 
 
 category.TriggerCalls = {}
+category.AIFunctions = category.TriggerCalls -- this is officially the same as TriggerCalls
 function category.TriggerCalls.parseLine(line)
 	-- 32 is the max allowed Jass arguments
 	local mt_indexRemapper5_32_to_4 = {__index = metatblFactory_IndexRemapper(5, 32, 4)}

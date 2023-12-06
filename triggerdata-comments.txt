@@ -1,5 +1,5 @@
 TRIGGERDATA.TXT
-
+---------------
 
 [TriggerCategories]
 // Defines categories for organizing trigger functions
@@ -88,3 +88,21 @@ Category01=WESTRING_INITIALIZATION
 [DefaultTriggers]
 // Defines triggers to be automatically added to new maps
 NumTriggers=1
+
+
+
+
+
+AIEDITORDATA.TXT
+----------------
+
+[AIFunctions]
+// Defines function calls used by the AI Editor
+// Note that this section should match the format of the [TriggerCalls] section
+// in TriggerData.txt, and the strings for these functions are in TriggerStrings.txt.
+//
+// Key: Function name
+// Value 0: first game version in which this function is valid
+// Value 1: flag (0 or 1) indicating if the call can be used in events (meaningless for AI Editor)
+// Value 2: return type
+// Value 3+: argument types
