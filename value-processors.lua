@@ -22,7 +22,7 @@ function valueProcessorsLib.intToGameVer(txt)
 	if txt == "0" then
 		return "roc"
 	elseif txt == "1" then
-		return "txt"
+		return "tft"
 	else
 		error()
 	end
