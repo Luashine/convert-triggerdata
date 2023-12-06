@@ -271,8 +271,8 @@ function category.TriggerCalls.parseLine(line)
 	local valueProcessors = {
 		[1] = valueProcessorsLib.intToGameVer,
 		[2] = valueProcessorsLib.binToBoolean,
-		[3] = valueProcessorsLib.acceptAny,
-		[4] = valueProcessorsLib.acceptAny
+		[3] = valueProcessorsLib.nop,
+		[4] = valueProcessorsLib.nop
 	}
 	setmetatable(valueProcessors, mt_indexRemapper)
 
@@ -365,7 +365,7 @@ function category.Property_Parameters.parseLine(line)
 end
 
 category.Property_DisplayName = {}
-function category.Property_Parameters.parseLine(line)
+function category.Property_DisplayName.parseLine(line)
 	local verificationRules = {
 		[1] = verificationRulesLib.acceptAny,
 	}
