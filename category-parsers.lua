@@ -113,14 +113,14 @@ function valueRenamerLib.returnType()
 end
 function valueRenamerLib.triggerEventsArgNumbered(index)
 	-- TriggerEvents arguments start at second index, so to make them 1-indexed substract 1
-	return string.format("%s%d", txt, index - 1)
+	return string.format("arg%dType", index - 1)
 end
 function valueRenamerLib.triggerCallsArgNumbered(index)
 	-- TriggerCalls arguments start at fourth index, so to make them 1-indexed substract 3
-	return string.format("%s%d", txt, index - 3)
+	return string.format("arg%dType", index - 3)
 end
 function valueRenamerLib.argNumberedDefault(index)
-	return string.format("arg%ddefault", index)
+	return string.format("arg%dDefault", index)
 end
 
 --- A heavily parametrized function to avoid duplicating code for each parser
