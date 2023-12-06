@@ -20,6 +20,14 @@ function verificationRulesLib.optionalString01(txt)
 	end
 end
 
+function verificationRulesLib.rejectAnyWhitespace(txt)
+	if txt:match("%s") then
+		return false, "found whitespace character in: '".. txt .."'"
+	else
+		return true
+	end
+end
+
 --- Holds value processors which convert values for digestible output
 valueProcessorsLib = {}
 function valueProcessorsLib.binToBoolean(txt)
@@ -56,6 +64,15 @@ function valueProcessorsLib.translate(txt)
 	-- NEI!
 	if TRANSLATION then
 		return TRANSLATION.translate(txt)
+	else
+		return txt
+	end
+end
+function valueProcessorsLib.stripDoubleQuotes(txt)
+	-- parameters are a format string containing a mix of "text" and ~variables
+	-- only process text by removing enclosing double quotes
+	if txt:sub(1,1) == '"' and txt:sub(-1,-1) == '"' then
+		return txt:sub(2,-2)
 	else
 		return txt
 	end
@@ -121,6 +138,15 @@ function valueRenamerLib.triggerCallsArgNumbered(index)
 end
 function valueRenamerLib.argNumberedDefault(index)
 	return string.format("arg%dDefault", index)
+end
+function valueRenamerLib.parametersNumbered(index)
+	return string.format("paramformat%d", index)
+end
+function valueRenamerLib.limitsNumbered(index)
+	-- odd is min limit
+	-- even is max limit
+	local whichLimit == index % 2 == 0 and "MaxLimit" or "MinLimit"
+	return string.format("arg%d%s", index, whichLimit)
 end
 
 --- A heavily parametrized function to avoid duplicating code for each parser
@@ -352,8 +378,6 @@ function category.TriggerEvents.parseLine(line)
 	}
 	setmetatable(valueRenamer, mt_indexRemapper3_32_to_2)
 
-	error("TODO: Secondary line extension")
-
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
 
@@ -449,3 +473,90 @@ function category.Property_Defaults.parseLine(line)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
+
+category.Property_AIDefaults = {}
+category.Property_AIDefaults.parseLine = category.Property_Defaults.parseLine
+
+category.Property_Parameters = {}
+function category.Property_Parameters.parseLine(line)
+	-- 100 is arbitrary, but I do not expect longer strings
+	local mt_indexRemapper2_32_to_1 = {__index = metatblFactory_IndexRemapper(2, 100, 1)}
+
+	local verificationRules = {
+		[1] = verificationRulesLib.acceptAny,
+	}
+	setmetatable(verificationRules, mt_indexRemapper2_32_to_1)
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.stripDoubleQuotes,
+	}
+	setmetatable(valueProcessors, mt_indexRemapper2_32_to_1)
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.parametersNumbered
+	}
+	setmetatable(valueRenamer, mt_indexRemapper2_32_to_1)
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
+category.Property_DisplayName = {}
+function category.Property_Parameters.parseLine(line)
+	local verificationRules = {
+		[1] = verificationRulesLib.acceptAny,
+	}
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.stripDoubleQuotes,
+	}
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.value,
+	}
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
+category.Property_Limits = {}
+function category.Property_Limits.parseLine(line)
+	-- 32 is the max allowed Jass arguments and we need double that for min/max limits
+	local mt_indexRemapper2_64_to_1 = {__index = metatblFactory_IndexRemapper(2, 64, 1)}
+
+	local verificationRules = {
+		[1] = verificationRulesLib.rejectAnyWhitespace,
+	}
+	setmetatable(verificationRules, mt_indexRemapper2_64_to_1)
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.nop,
+	}
+	setmetatable(valueProcessors, mt_indexRemapper2_64_to_1)
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.
+	}
+	setmetatable(valueRenamer, mt_indexRemapper2_64_to_1)
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
+category.Prorperty_ScriptName = {}
+category.Prorperty_ScriptName.parseLine = category.DefaultTriggerCategories.parseLine
+
+category.Property_UseWithAI = {}
+function category.Property_UseWithAI.parseLine(line)
+	local verificationRules = {
+		[1] = verificationRulesLib.requireString01,
+	}
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.binToBooleanDefault0, -- current parser will not even encounter a missing value
+	}
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.value,
+	}
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
