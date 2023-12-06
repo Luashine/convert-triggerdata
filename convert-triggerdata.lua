@@ -69,6 +69,8 @@ function parseFile(fileH, dataOut)
 			-- _UseWithAI: always used with a 1, so it must default to 0 if unspecified
 
 			-- _AIDefaults: apparently only applied in AI editor, while regular map triggers use _Defaults
+			local PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX = "[^=]+_([^=]+)" -- todo: this should be simpler and based on previous full match name
+			local propertyName = line:match(PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX)
 
 		elseif line:match(PATTERN_ENTRY) then
 			-- This must match after _ENTRYPROPERTY, because ENTRY names may contain underscores

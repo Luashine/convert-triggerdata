@@ -119,6 +119,9 @@ function valueRenamerLib.triggerCallsArgNumbered(index)
 	-- TriggerCalls arguments start at fourth index, so to make them 1-indexed substract 3
 	return string.format("%s%d", txt, index - 3)
 end
+function valueRenamerLib.argNumberedDefault(index)
+	return string.format("arg%ddefault", index)
+end
 
 --- A heavily parametrized function to avoid duplicating code for each parser
 -- Consider this a declarative parser at this point
@@ -418,3 +421,31 @@ end
 category.DefaultTriggers = {}
 -- same parser
 category.DefaultTriggers.parseLine = category.DefaultTriggerCategories.parseLine
+
+
+--- Advanced entries can have properties defined by a _Suffix. Rules for those
+category.Property_Category = {}
+category.Property_Category.parseLine = category.DefaultTriggerCategories.parseLine
+
+category.Property_Defaults = {}
+function category.Property_Defaults.parseLine(line)
+	-- 32 is the max allowed Jass arguments
+	local mt_indexRemapper2_32_to_1 = {__index = metatblFactory_IndexRemapper(2, 32, 1)}
+
+	local verificationRules = {
+		[1] = verificationRulesLib.acceptAny,
+	}
+	setmetatable(verificationRules, mt_indexRemapper2_32_to_1)
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.nop,
+	}
+	setmetatable(valueProcessors, mt_indexRemapper2_32_to_1)
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.argNumberedDefault
+	}
+	setmetatable(valueRenamer, mt_indexRemapper2_32_to_1)
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
