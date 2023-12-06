@@ -387,7 +387,7 @@ function category.Property_Limits.parseLine(line)
 	setmetatable(valueProcessors, mt_indexRemapper2_64_to_1)
 
 	local valueRenamer = {
-		[1] = valueRenamerLib.
+		[1] = valueRenamerLib.limitsNumbered
 	}
 	setmetatable(valueRenamer, mt_indexRemapper2_64_to_1)
 

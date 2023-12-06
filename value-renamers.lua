@@ -65,7 +65,7 @@ end
 function valueRenamerLib.limitsNumbered(index)
 	-- odd is min limit
 	-- even is max limit
-	local whichLimit == index % 2 == 0 and "MaxLimit" or "MinLimit"
+	local whichLimit = index % 2 == 0 and "MaxLimit" or "MinLimit"
 	return string.format("arg%d%s", index, whichLimit)
 end
 

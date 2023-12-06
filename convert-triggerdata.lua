@@ -24,7 +24,7 @@ Answer: __LOCALE__/ui/worldeditstrings.txt
 require"category-parsers"
 
 function parseFile(fileH, dataOut)
-	local PATTERN_CATEGORY = "^\[([A-Za-z0-9]+)\]"
+	local PATTERN_CATEGORY = "^%[([A-Za-z0-9]+)%]"
 	local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
 	local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
 
@@ -132,7 +132,7 @@ end
 function main(...)
 	local filePaths = {}
 	for k, v in pairs(args) do
-		if not v:match("^\-\-") then
+		if not v:match("^%-%-") then
 			table.insert(filePaths, v)
 		end
 	end
