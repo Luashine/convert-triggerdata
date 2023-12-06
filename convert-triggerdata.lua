@@ -98,8 +98,18 @@ function parseFile(fileH, dataOut)
 			end
 
 			local parsedProperty = parserTbl.parseLine(line)
-			assert(lastEntry[propertyName] == nil, string.format("Unexpectedly found property's name key '%s' in previous base entry on line '%s'!",
-				propertyName, line))
+			if lastEntry[propertyName] ~= nil then
+				local errMsg = string.format(
+					"Property's name key '%s' already exists in previous base entry on line '%s'!",
+					propertyName, line
+				)
+				if lastEntry.name == "TriggerRegisterUnitInRangeSimple" then
+					-- the first value with 256 range is applied by editor
+					warnExpected(errMsg)
+				else
+					error(errMsg)
+				end
+			end
 
 			lastEntry[propertyName] = parsedProperty
 			parsedProperty.name = nil -- avoid duplication
@@ -125,6 +135,11 @@ function parseFile(fileH, dataOut)
 		end
 
 	end
+end
+
+function warnExpected(...)
+	stderr("Expected warning: ", ...)
+	stderr("\n")
 end
 
 function stderr(...)
