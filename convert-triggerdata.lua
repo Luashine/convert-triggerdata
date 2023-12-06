@@ -24,6 +24,9 @@ require"category-parsers"
 
 function parseFile(fileH, dataOut)
 	local PATTERN_CATEGORY = "^\[([A-Za-z0-9]+)\]"
+	local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
+	local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
+
 	local categoryName = "ROOT_LEVEL"
 
 	for line in fileH:lines() do
@@ -39,7 +42,36 @@ function parseFile(fileH, dataOut)
 			-- category name
 			categoryName = line:match(PATTERN_CATEGORY)
 
-		elseif line:match("^[A-Za-z_]") then
+		elseif line:match(PATTERN_ENTRYPROPERTY) then
+			-- This must match before ENTRY, because this is a stricter check that must begin with underscore
+
+			-- secondary line, expands the previous definition that wasn't prefixed with underscore _
+
+			-- possible properties:
+			-- case-insensitive: _CATEGORY
+			-- _Defaults: csv of default values in code or "_"
+			-- _Category: single value, category ID
+			-- _Parameters: format-like text WITH function arguments, csv
+			-- example: _GetPlayerTechCountSimple_Parameters="Current research level of ",~Tech," for ",~Player
+			-- example: _GetPlayerUnitCount_Parameters="Count non-structure units controlled by ",~Player," (",~Include/Exclude," incomplete units)"
+			-- here, "Include/Exclude" are suffixes to be concatenated to construct the type with its pre-defined default boolean value
+
+			-- _DisplayName: single value, in double-quotes (but localization files do not have them sometimes)
+
+			-- _Limits: csv, used for integer/real limits. Two entries per argument
+			-- numbers are both inclusive, non-integer or "no limit" is denoted by an underscore _
+			-- may have a trailing comma (followed by nothing)
+			-- may have one or both limits (e.g. only minimal limit)
+
+			-- _ScriptName: I suppose this is the alias to be used in generated code
+			-- example: "_SetHeroLevel_ScriptName=SetHeroLevelBJ"
+
+			-- _UseWithAI: always used with a 1, so it must default to 0 if unspecified
+
+			-- _AIDefaults: apparently only applied in AI editor, while regular map triggers use _Defaults
+
+		elseif line:match(PATTERN_ENTRY) then
+			-- This must match after _ENTRYPROPERTY, because ENTRY names may contain underscores
 			-- conservative matching rule
 			-- That's a value, process it according to category
 
