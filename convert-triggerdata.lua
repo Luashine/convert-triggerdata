@@ -116,7 +116,9 @@ function parseFile(fileH, dataOut)
 
 			local entryName = line:match(PATTERN_ENTRY)
 
-			local parserTbl = assert(category[entryName])
+			local parserTbl = assert(category[categoryName], string.format(
+				"Parser not found for category: '%s' on line: '%s'", tostring(entryName), line))
+
 			lastEntry = parserTbl.parseLine(line)
 		else
 			error("Unknown line format, line: '".. line .."'")
@@ -129,7 +131,7 @@ function stderr(...)
 	io.stderr:write(...)
 end
 
-function main(...)
+function main(args)
 	local filePaths = {}
 	for k, v in pairs(args) do
 		if not v:match("^%-%-") then
@@ -140,9 +142,9 @@ function main(...)
 	local data = {}
 
 	for k, path in pairs(filePaths) do
-		stderr("Reading file: ".. file, "\n")
+		stderr("Reading file: ".. path, "\n")
 
-		local file = assert(path)
+		local file = assert(io.open(path, "rb"))
 		parseFile(file, data)
 		file:close()
 	end

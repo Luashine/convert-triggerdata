@@ -12,6 +12,7 @@ function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 	local definition = {}
 	definition.name = name
 
+	local matchCount = 0
 	for match in valueText:gmatch("[^,]+") do
 		matchCount = matchCount + 1
 
@@ -203,7 +204,7 @@ function metatblFactory_IndexRemapper(minIndex, maxIndex, remapToIndex)
 		if type(key) == "number" and key >= minIndex and key <= maxIndex then
 			return t[remapToIndex]
 		else
-			return t[key]
+			return rawget(t, key)
 		end
 	end
 end
@@ -274,8 +275,6 @@ function category.TriggerCalls.parseLine(line)
 		[4] = valueRenamerLib.triggerCallsArgNumbered
 	}
 	setmetatable(valueRenamer, mt_indexRemapper5_32_to_4)
-
-	error("TODO: Secondary line extension")
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
