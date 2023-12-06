@@ -148,6 +148,18 @@ function main(args)
 		parseFile(file, data)
 		file:close()
 	end
+
+	if false then
+		local JSON = require"lib.JSON"
+		io.stdout:write(JSON:encode_pretty(data))
+	end
+
+	if true then
+		local serpent = require("lib.serpent@139fc18.src.serpent")
+		io.stdout:write(serpent.block(data), "\n")
+
+
+	end
 end
 
 local args = args or {...}
