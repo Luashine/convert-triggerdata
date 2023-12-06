@@ -33,7 +33,7 @@ function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 		end
 
 		local valueProcessed = verificationRules[matchCount](match)
-		local valueName = valueRenamer[matchCount](index) -- supply index to support parametrized functions
+		local valueName = valueRenamer[matchCount](matchCount) -- supply index to support parametrized functions
 
 		definition[valueName] = valueProcessed
 	end
