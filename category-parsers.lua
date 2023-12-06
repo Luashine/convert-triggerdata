@@ -2,6 +2,8 @@ verificationRulesLib = require"verification-rules"
 valueProcessorsLib = require"value-processors"
 valueRenamerLib = require"value-renamers"
 
+local JASS_MAX_ARGS = 32
+
 --- A heavily parametrized function to avoid duplicating code for each parser
 -- Consider this a declarative parser at this point
 function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
@@ -212,25 +214,28 @@ end
 category.TriggerEvents = {}
 function category.TriggerEvents.parseLine(line)
 	-- 32 is the max allowed Jass arguments
-	local mt_indexRemapper3_32_to_2 = {__index = metatblFactory_IndexRemapper(3, 32, 2)}
+	local firstArgIndex = 2
+	local remapMin = firstArgIndex + 1
+	local remapMax = firstArgIndex + JASS_MAX_ARGS - 1
+	local mt_indexRemapper = {__index = metatblFactory_IndexRemapper(remapMin, remapMax, firstArgIndex)}
 
 	local verificationRules = {
 		[1] = verificationRulesLib.requireGameVersion,
 		[2] = verificationRulesLib.acceptAny,
 	}
-	setmetatable(verificationRules, mt_indexRemapper3_32_to_2)
+	setmetatable(verificationRules, mt_indexRemapper)
 
 	local valueProcessors = {
 		[1] = valueProcessorsLib.intToGameVer,
 		[2] = valueProcessorsLib.nop
 	}
-	setmetatable(valueProcessors, mt_indexRemapper3_32_to_2)
+	setmetatable(valueProcessors, mt_indexRemapper)
 
 	local valueRenamer = {
 		[1] = valueRenamerLib.minGameVersion,
 		[2] = valueRenamerLib.triggerEventsArgNumbered
 	}
-	setmetatable(valueRenamer, mt_indexRemapper3_32_to_2)
+	setmetatable(valueRenamer, mt_indexRemapper)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
@@ -250,7 +255,10 @@ category.TriggerCalls = {}
 category.AIFunctions = category.TriggerCalls -- this is officially the same as TriggerCalls
 function category.TriggerCalls.parseLine(line)
 	-- 32 is the max allowed Jass arguments
-	local mt_indexRemapper5_32_to_4 = {__index = metatblFactory_IndexRemapper(5, 32, 4)}
+	local firstArgIndex = 4
+	local remapMin = firstArgIndex + 1
+	local remapMax = firstArgIndex + JASS_MAX_ARGS - 1
+	local mt_indexRemapper = {__index = metatblFactory_IndexRemapper(remapMin, remapMax, firstArgIndex)}
 
 	local verificationRules = {
 		[1] = verificationRulesLib.requireGameVersion,
@@ -258,7 +266,7 @@ function category.TriggerCalls.parseLine(line)
 		[3] = verificationRulesLib.acceptAny,
 		[4] = verificationRulesLib.acceptAny,
 	}
-	setmetatable(verificationRules, mt_indexRemapper5_32_to_4)
+	setmetatable(verificationRules, mt_indexRemapper)
 
 	local valueProcessors = {
 		[1] = valueProcessorsLib.intToGameVer,
@@ -266,7 +274,7 @@ function category.TriggerCalls.parseLine(line)
 		[3] = valueProcessorsLib.acceptAny,
 		[4] = valueProcessorsLib.acceptAny
 	}
-	setmetatable(valueProcessors, mt_indexRemapper5_32_to_4)
+	setmetatable(valueProcessors, mt_indexRemapper)
 
 	local valueRenamer = {
 		[1] = valueRenamerLib.minGameVersion,
@@ -274,7 +282,7 @@ function category.TriggerCalls.parseLine(line)
 		[3] = valueRenamerLib.returnType,
 		[4] = valueRenamerLib.triggerCallsArgNumbered
 	}
-	setmetatable(valueRenamer, mt_indexRemapper5_32_to_4)
+	setmetatable(valueRenamer, mt_indexRemapper)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
@@ -307,22 +315,25 @@ category.Property_Category.parseLine = category.DefaultTriggerCategories.parseLi
 category.Property_Defaults = {}
 function category.Property_Defaults.parseLine(line)
 	-- 32 is the max allowed Jass arguments
-	local mt_indexRemapper2_32_to_1 = {__index = metatblFactory_IndexRemapper(2, 32, 1)}
+	local firstArgIndex = 1
+	local remapMin = firstArgIndex + 1
+	local remapMax = firstArgIndex + JASS_MAX_ARGS - 1
+	local mt_indexRemapper = {__index = metatblFactory_IndexRemapper(remapMin, remapMax, firstArgIndex)}
 
 	local verificationRules = {
 		[1] = verificationRulesLib.acceptAny,
 	}
-	setmetatable(verificationRules, mt_indexRemapper2_32_to_1)
+	setmetatable(verificationRules, mt_indexRemapper)
 
 	local valueProcessors = {
 		[1] = valueProcessorsLib.nop,
 	}
-	setmetatable(valueProcessors, mt_indexRemapper2_32_to_1)
+	setmetatable(valueProcessors, mt_indexRemapper)
 
 	local valueRenamer = {
 		[1] = valueRenamerLib.argNumberedDefault
 	}
-	setmetatable(valueRenamer, mt_indexRemapper2_32_to_1)
+	setmetatable(valueRenamer, mt_indexRemapper)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
@@ -332,23 +343,23 @@ category.Property_AIDefaults.parseLine = category.Property_Defaults.parseLine
 
 category.Property_Parameters = {}
 function category.Property_Parameters.parseLine(line)
-	-- 100 is arbitrary, but I do not expect longer strings
-	local mt_indexRemapper2_32_to_1 = {__index = metatblFactory_IndexRemapper(2, 100, 1)}
+	-- limit arbitrary, but I do not expect longer strings
+	local mt_indexRemapper = {__index = metatblFactory_IndexRemapper(2, JASS_MAX_ARGS*3, 1)}
 
 	local verificationRules = {
 		[1] = verificationRulesLib.acceptAny,
 	}
-	setmetatable(verificationRules, mt_indexRemapper2_32_to_1)
+	setmetatable(verificationRules, mt_indexRemapper)
 
 	local valueProcessors = {
 		[1] = valueProcessorsLib.stripDoubleQuotes,
 	}
-	setmetatable(valueProcessors, mt_indexRemapper2_32_to_1)
+	setmetatable(valueProcessors, mt_indexRemapper)
 
 	local valueRenamer = {
 		[1] = valueRenamerLib.parametersNumbered
 	}
-	setmetatable(valueRenamer, mt_indexRemapper2_32_to_1)
+	setmetatable(valueRenamer, mt_indexRemapper)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
@@ -373,7 +384,7 @@ end
 category.Property_Limits = {}
 function category.Property_Limits.parseLine(line)
 	-- 32 is the max allowed Jass arguments and we need double that for min/max limits
-	local mt_indexRemapper2_64_to_1 = {__index = metatblFactory_IndexRemapper(2, 64, 1)}
+	local mt_indexRemapper2_64_to_1 = {__index = metatblFactory_IndexRemapper(2, JASS_MAX_ARGS*2, 1)}
 
 	local verificationRules = {
 		[1] = verificationRulesLib.rejectAnyWhitespace,
