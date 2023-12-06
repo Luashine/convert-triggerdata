@@ -18,6 +18,7 @@ campaigninforeforged.txt: same as above
 
 --[[
 Question: Where are all the WESTRING_ located?
+Answer: __LOCALE__/ui/worldeditstrings.txt
 ]]
 
 require"category-parsers"
@@ -28,6 +29,7 @@ function parseFile(fileH, dataOut)
 	local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
 
 	local categoryName = "ROOT_LEVEL"
+	local lastEntry = nil
 
 	for line in fileH:lines() do
 		line = line:gsub("\r$", "")
@@ -40,17 +42,31 @@ function parseFile(fileH, dataOut)
 
 		elseif line:match(PATTERN_CATEGORY) then
 			-- category name
+
+			-- commit lastEntry first, then create category
+			if lastEntry then
+				-- table may not exist only for ROOT_LEVEL
+				if not dataOut[categoryName] then dataOut[categoryName] = {} end
+				table.insert(dataOut[categoryName], lastEntry)
+			end
+
 			categoryName = line:match(PATTERN_CATEGORY)
+			dataOut[categoryName] = {}
 
 		elseif line:match(PATTERN_ENTRYPROPERTY) then
 			-- This must match before ENTRY, because this is a stricter check that must begin with underscore
 
 			-- secondary line, expands the previous definition that wasn't prefixed with underscore _
 
-			-- possible properties:
+			assert(lastEntry, "Unexpected entry property, last entry is nil. Line: '".. line .."'")
+
+			-- POSSIBLE PROPERTIES:
+
 			-- case-insensitive: _CATEGORY
-			-- _Defaults: csv of default values in code or "_"
 			-- _Category: single value, category ID
+
+			-- _Defaults: csv of default values in code or "_"
+
 			-- _Parameters: format-like text WITH function arguments, csv
 			-- example: _GetPlayerTechCountSimple_Parameters="Current research level of ",~Tech," for ",~Player
 			-- example: _GetPlayerUnitCount_Parameters="Count non-structure units controlled by ",~Player," (",~Include/Exclude," incomplete units)"
@@ -71,13 +87,37 @@ function parseFile(fileH, dataOut)
 			-- _AIDefaults: apparently only applied in AI editor, while regular map triggers use _Defaults
 			local PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX = "[^=]+_([^=]+)" -- todo: this should be simpler and based on previous full match name
 			local propertyName = line:match(PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX)
+			if propertyName == "CATEGORY" then
+				propertyName = "Category"
+			end
+
+			local parserTbl = category["Property_" .. propertyName]
+
+			if not parserTbl then
+				error("parser for property '".. tostring(propertyName) .."' not found, line: '".. line .."'")
+			end
+
+			local parsedProperty = parserTbl.parseLine(line)
+			assert(lastEntry[propertyName] == nil, string.format("Unexpectedly found property's name key '%s' in previous base entry on line '%s'!",
+				propertyName, line))
+
+			lastEntry[propertyName] = parsedProperty
+			parsedProperty.name = nil -- avoid duplication
 
 		elseif line:match(PATTERN_ENTRY) then
 			-- This must match after _ENTRYPROPERTY, because ENTRY names may contain underscores
 			-- conservative matching rule
 			-- That's a value, process it according to category
 
+			-- commit lastEntry first
+			if lastEntry then
+				table.insert(dataOut[categoryName], lastEntry)
+			end
 
+			local entryName = line:match(PATTERN_ENTRY)
+
+			local parserTbl = assert(category[entryName])
+			lastEntry = parserTbl.parseLine(line)
 		else
 			error("Unknown line format, line: '".. line .."'")
 		end
