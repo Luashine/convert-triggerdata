@@ -32,7 +32,7 @@ function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 			error(string.format("Verification failed for #%d of '%s': %s", matchCount, name. err))
 		end
 
-		local valueProcessed = verificationRules[matchCount](match)
+		local valueProcessed = valueProcessors[matchCount](match)
 		local valueName = valueRenamer[matchCount](matchCount) -- supply index to support parametrized functions
 
 		definition[valueName] = valueProcessed
