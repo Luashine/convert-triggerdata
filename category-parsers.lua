@@ -412,8 +412,8 @@ function category.Property_Limits.parseLine(line)
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
 
-category.Prorperty_ScriptName = {}
-category.Prorperty_ScriptName.parseLine = category.DefaultTriggerCategories.parseLine
+category.Property_ScriptName = {}
+category.Property_ScriptName.parseLine = category.DefaultTriggerCategories.parseLine
 
 category.Property_UseWithAI = {}
 function category.Property_UseWithAI.parseLine(line)
