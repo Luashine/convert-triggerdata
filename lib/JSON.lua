@@ -1628,7 +1628,12 @@ local function encode_value(self, value, parents, etc, options, indent, for_key)
             end
             local key_indent = indent .. tostring(options.indent or "")
             local subtable_indent = key_indent .. string.rep(" ", max_key_length) .. (options.align_keys and "  " or "")
-            local FORMAT = "%s%" .. string.format("%d", max_key_length) .. "s: %s"
+            local FORMAT
+            if max_key_length == 0 then
+               FORMAT = "%s%s: %s"
+            else
+               FORMAT = "%s%" .. string.format("%d", max_key_length) .. "s: %s"
+            end
 
             local COMBINED_PARTS = { }
             for i, key in ipairs(object_keys) do
