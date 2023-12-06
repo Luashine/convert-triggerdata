@@ -23,6 +23,14 @@ Answer: __LOCALE__/ui/worldeditstrings.txt
 
 require"category-parsers"
 
+IGNORE_DOUBLE_DEFAULTS = {
+	["TriggerRegisterUnitInRangeSimple"] = true,
+	["SetTimeOfDayScalePercentBJ"] = true,
+	["SetUnitLifeBJ"] = true,
+	["BlzSetAbilityIntegerLevelFieldBJ"] = true,
+	["CreateFogModifierRadiusLocBJ"] = true,
+	["BlzSetAbilityIntegerLevelField"] = true,
+}
 function parseFile(fileH, dataOut)
 	local PATTERN_CATEGORY = "^%[([A-Za-z0-9]+)%]"
 	local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
@@ -60,6 +68,11 @@ function parseFile(fileH, dataOut)
 
 			assert(lastEntry, "Unexpected entry property, last entry is nil. Line: '".. line .."'")
 
+			if line == "_BlzGetUnitCollisionSize=TC_UNIT" then
+				warnExpected("Broken property declaration, supposed to be _Category: '".. line .."'")
+				line = "_BlzGetUnitCollisionSize_Category=TC_UNIT"
+			end
+
 			-- POSSIBLE PROPERTIES:
 
 			-- case-insensitive: _CATEGORY
@@ -89,7 +102,12 @@ function parseFile(fileH, dataOut)
 			local propertyName = line:match(PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX)
 			if propertyName == "CATEGORY" then
 				propertyName = "Category"
+			elseif propertyName == "Limites" then
+				warnExpected("Mistyped 'Limits' in line: '".. line .."'")
+				propertyName = "Limits"
 			end
+
+
 
 			local parserTbl = category["Property_" .. propertyName]
 
@@ -103,8 +121,8 @@ function parseFile(fileH, dataOut)
 					"Property's name key '%s' already exists in previous base entry on line '%s'!",
 					propertyName, line
 				)
-				if lastEntry.name == "TriggerRegisterUnitInRangeSimple" then
-					-- the first value with 256 range is applied by editor
+				if propertyName == "Defaults" and IGNORE_DOUBLE_DEFAULTS[lastEntry.name] then
+					-- the first value is applied by editor (maybe because the value count matches)
 					warnExpected(errMsg)
 				else
 					error(errMsg)
