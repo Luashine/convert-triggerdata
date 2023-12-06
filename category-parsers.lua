@@ -4,18 +4,26 @@ valueRenamerLib = require"value-renamers"
 
 local JASS_MAX_ARGS = 32
 
+local triggerdataValueIterator = require"value-iterator"
+
 --- A heavily parametrized function to avoid duplicating code for each parser
 -- Consider this a declarative parser at this point
 function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
-	local name, valueText = line:match("([^=]+)=(.+)")
+	local name, valueText = line:match("([^=]+)=(.*)")
 
-	assert(name)
+	assert(name, "Did not match definition for line: '".. line .."'")
 
 	local definition = {}
 	definition.name = name
 
+	if #valueText == 0 then
+		-- _MapInitializationEvent_Defaults=
+		-- It's literally empty, so the value is technically nil too.
+		return definition
+	end
+
 	local matchCount = 0
-	for match in valueText:gmatch("[^,]+") do
+	for pos, match in triggerdataValueIterator(valueText) do
 		matchCount = matchCount + 1
 
 		assert(verificationRules[matchCount], string.format(
@@ -119,7 +127,7 @@ function category.TriggerCategories.parseLine(line)
 end
 
 category.TriggerTypes = {}
-function category.TriggerTypes(line)
+function category.TriggerTypes.parseLine(line)
 	-- abilcode=0,1,1,WESTRING_TRIGTYPE_abilcode,integer
 	-- lightning=1,1,1,WESTRING_TRIGTYPE_lightning
 	-- aiscript=0,0,0,WESTRING_TRIGTYPE_aiscript,string,AIScript,1
