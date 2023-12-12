@@ -2,7 +2,7 @@ verificationRulesLib = require"verification-rules"
 valueProcessorsLib = require"value-processors"
 valueRenamerLib = require"value-renamers"
 
-local JASS_MAX_ARGS = 32
+local JASS_MAX_ARGS = 31
 
 local triggerdataValueIterator = require"value-iterator"
 
