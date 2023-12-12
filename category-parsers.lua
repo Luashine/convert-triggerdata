@@ -339,11 +339,12 @@ category.DefaultTriggers.parseLine = category.DefaultTriggerCategories.parseLine
 
 
 --- Advanced entries can have properties defined by a _Suffix. Rules for those
-category.Property_Category = {}
-category.Property_Category.parseLine = category.DefaultTriggerCategories.parseLine
+property = {}
+property.Category = {}
+property.Category.parseLine = category.DefaultTriggerCategories.parseLine
 
-category.Property_Defaults = {}
-function category.Property_Defaults.parseLine(line)
+property.Defaults = {}
+function property.Defaults.parseLine(line)
 	-- 32 is the max allowed Jass arguments
 	local firstArgIndex = 1
 	local remapMin = firstArgIndex + 1
@@ -368,11 +369,11 @@ function category.Property_Defaults.parseLine(line)
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
 
-category.Property_AIDefaults = {}
-category.Property_AIDefaults.parseLine = category.Property_Defaults.parseLine
+property.AIDefaults = {}
+property.AIDefaults.parseLine = property.Defaults.parseLine
 
-category.Property_Parameters = {}
-function category.Property_Parameters.parseLine(line)
+property.Parameters = {}
+function property.Parameters.parseLine(line)
 	-- limit arbitrary, but I do not expect longer strings
 	local mt_indexRemapper = {__index = metatblFactory_IndexRemapper(2, JASS_MAX_ARGS*3, 1)}
 
@@ -394,8 +395,8 @@ function category.Property_Parameters.parseLine(line)
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
 
-category.Property_DisplayName = {}
-function category.Property_DisplayName.parseLine(line)
+property.DisplayName = {}
+function property.DisplayName.parseLine(line)
 	local verificationRules = {
 		[1] = verificationRulesLib.acceptAny,
 	}
@@ -411,8 +412,8 @@ function category.Property_DisplayName.parseLine(line)
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
 
-category.Property_Limits = {}
-function category.Property_Limits.parseLine(line)
+property.Limits = {}
+function property.Limits.parseLine(line)
 	-- 32 is the max allowed Jass arguments and we need double that for min/max limits
 	local mt_indexRemapper2_64_to_1 = {__index = metatblFactory_IndexRemapper(2, JASS_MAX_ARGS*2, 1)}
 
@@ -434,11 +435,11 @@ function category.Property_Limits.parseLine(line)
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
 
-category.Property_ScriptName = {}
-category.Property_ScriptName.parseLine = category.DefaultTriggerCategories.parseLine
+property.ScriptName = {}
+property.ScriptName.parseLine = category.DefaultTriggerCategories.parseLine
 
-category.Property_UseWithAI = {}
-function category.Property_UseWithAI.parseLine(line)
+property.UseWithAI = {}
+function property.UseWithAI.parseLine(line)
 	local verificationRules = {
 		[1] = verificationRulesLib.requireString01,
 	}

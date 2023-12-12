@@ -110,7 +110,7 @@ function parseFile(fileH, dataOut)
 
 
 
-			local parserTbl = category["Property_" .. propertyName]
+			local parserTbl = property[propertyName]
 
 			if not parserTbl or (not parserTbl.parseLine) then
 				error("parser for property '".. tostring(propertyName) .."' not found, line: '".. line .."'")
