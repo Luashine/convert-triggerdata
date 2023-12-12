@@ -214,7 +214,7 @@ function main(args)
 
 	if outputType == outputTypes.lua then
 		local serpent = require("lib.serpent@139fc18.src.serpent")
-		io.stdout:write(serpent.block(data), "\n")
+		io.stdout:write(serpent.block(data, {comment = false}), "\n")
 
 
 	end
