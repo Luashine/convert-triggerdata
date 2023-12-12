@@ -12,7 +12,7 @@ function triggerdataValueIterator_test()
 
 			if expectedTbl[matchCount] ~= value then
 				error(string.format(
-					"triggerdataValueIterator: Failed test, text='%s', expected='%s' at index='%d', got='%s'",
+					"triggerdataValueIterator: Failed test,\ntext='%s',\nexpected='%s' at index='%d',\ngot='%s'",
 					text, tostring(expectedTbl[matchCount]), matchCount, value
 				))
 			end
@@ -25,6 +25,7 @@ function triggerdataValueIterator_test()
 	test([["3trail",]], {'"3trail"'})
 	test([[,"4start"]], {'"4start"'})
 	test([["Inside , here ",~val," outside"]], {'"Inside , here "', "~val", '" outside"'})
+	test([["Set to ",~Music,", starting with song ",~Index]], {'"Set to "', "~Music", '", starting with song "', "~Index"})
 end
 
 

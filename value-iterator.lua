@@ -1,5 +1,8 @@
 local function triggerdataValueIterator_next(text, offset)
 	offset = offset + 1
+	if text:sub(offset, offset+1) == ',"' then
+		offset = offset + 1 -- another hardcoded garbage fix, when parser fix?
+	end
 
 	local from, to, match;
 	if text:sub(offset, offset) == '"' then
