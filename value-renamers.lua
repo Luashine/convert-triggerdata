@@ -60,7 +60,7 @@ function valueRenamerLib.argNumberedDefault(index)
 	return string.format("arg%dDefault", index)
 end
 function valueRenamerLib.parametersNumbered(index)
-	return string.format("paramformat%d", index)
+	return index
 end
 function valueRenamerLib.limitsNumbered(index)
 	-- odd is min limit
