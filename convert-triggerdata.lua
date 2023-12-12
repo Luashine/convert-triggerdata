@@ -173,7 +173,7 @@ function stderr(...)
 end
 
 function main(args)
-	local outputTypes = {json = 1, lua = 2}
+	local outputTypes = {none = 0, json = 1, lua = 2}
 	local outputType = outputTypes.json
 	local filePaths = {}
 
@@ -184,6 +184,8 @@ function main(args)
 			outputType = outputTypes.json
 		elseif v == "--lua" then
 			outputType = outputTypes.lua
+		elseif v == "--none" then
+			outputType = outputTypes.none
 		elseif v:find("^%-%-") then
 			error("Unknown command-line option: '".. tostring(v) .."'")
 		end
