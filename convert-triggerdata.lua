@@ -173,10 +173,19 @@ function stderr(...)
 end
 
 function main(args)
+	local outputTypes = {json = 1, lua = 2}
+	local outputType = outputTypes.json
 	local filePaths = {}
+
 	for k, v in pairs(args) do
 		if not v:match("^%-%-") then
 			table.insert(filePaths, v)
+		elseif v == "--json" then
+			outputType = outputTypes.json
+		elseif v == "--lua" then
+			outputType = outputTypes.lua
+		elseif v:find("^%-%-") then
+			error("Unknown command-line option: '".. tostring(v) .."'")
 		end
 	end
 
@@ -190,12 +199,12 @@ function main(args)
 		file:close()
 	end
 
-	if false then
+	if outputType == outputTypes.json then
 		local JSON = require"lib.JSON"
-		io.stdout:write(JSON:encode_pretty(data))
+		io.stdout:write(JSON:encode_pretty(data), "\n")
 	end
 
-	if true then
+	if outputType == outputTypes.lua then
 		local serpent = require("lib.serpent@139fc18.src.serpent")
 		io.stdout:write(serpent.block(data), "\n")
 
