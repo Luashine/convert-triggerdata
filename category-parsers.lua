@@ -8,6 +8,9 @@ local triggerdataValueIterator = require"value-iterator"
 
 --- A heavily parametrized function to avoid duplicating code for each parser
 -- Consider this a declarative parser at this point
+---@param valueRenamer a function returning a name to be used as table key to store the value:
+---1) a string/number, simple table index
+---2) a table (array), recursively iterate as keys, creating subtables as needed. The last value is the key for value
 function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 	local name, valueText = line:match("([^=]+)=(.*)")
 
@@ -43,7 +46,26 @@ function parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 		local valueProcessed = valueProcessors[matchCount](match)
 		local valueName = valueRenamer[matchCount](matchCount) -- supply index to support parametrized functions
 
-		definition[valueName] = valueProcessed
+		if type(valueName) ~= "table" then
+			definition[valueName] = valueProcessed
+		else
+			-- nested indexing
+			assert(#valueName > 0)
+			local parentTable = definition
+			if #valueName > 1 then
+				for i = 1, #valueName - 1 do -- exclude final key
+					local tblName = valueName[i]
+					if parentTable[tblName] == nil then
+						parentTable[tblName] = {}
+					end
+					parentTable = parentTable[tblName] -- descend
+				end
+			end
+
+			-- final key is for subtable index
+			local finalKey = valueName[ #valueName ]
+			parentTable[finalKey] = valueProcessed
+		end
 	end
 
 	if verificationRules.atLeastValues then

@@ -48,16 +48,27 @@ end
 function valueRenamerLib.returnType()
 	return "returnType"
 end
-function valueRenamerLib.triggerEventsArgNumbered(index)
-	-- TriggerEvents arguments start at second index, so to make them 1-indexed substract 1
-	return string.format("arg%dType", index - 1)
+
+do
+
+	local function triggerArgNumberedOffset(index, indexOffset)
+		-- different offsets are needed based on definition
+		return {"ArgTypes", index + indexOffset }
+	end
+
+	function valueRenamerLib.triggerEventsArgNumbered(index)
+		-- TriggerEvents arguments start at second index, so to make them 1-indexed substract 1
+		return triggerArgNumberedOffset(index, -1)
+	end
+
+	function valueRenamerLib.triggerCallsArgNumbered(index)
+		-- TriggerCalls arguments start at fourth index, so to make them 1-indexed substract 3
+		return triggerArgNumberedOffset(index, -3)
+	end
 end
-function valueRenamerLib.triggerCallsArgNumbered(index)
-	-- TriggerCalls arguments start at fourth index, so to make them 1-indexed substract 3
-	return string.format("arg%dType", index - 3)
-end
+
 function valueRenamerLib.argNumberedDefault(index)
-	return string.format("arg%dDefault", index)
+	return index
 end
 function valueRenamerLib.parametersNumbered(index)
 	return index
@@ -65,8 +76,9 @@ end
 function valueRenamerLib.limitsNumbered(index)
 	-- odd is min limit
 	-- even is max limit
-	local whichLimit = index % 2 == 0 and "MaxLimit" or "MinLimit"
-	return string.format("arg%d%s", index, whichLimit)
+	local whichLimit = index % 2 == 0 and "max" or "min"
+	local flatIndex = math.ceil(index / 2) -- 1 / 2 = 0.5 --> 1
+	return {whichLimit, flatIndex}
 end
 
 return valueRenamerLib
