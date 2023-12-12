@@ -130,8 +130,14 @@ function parseFile(fileH, dataOut)
 				end
 			end
 
-			lastEntry[propertyName] = parsedProperty
-			parsedProperty.name = nil -- avoid duplication
+			if parsedProperty.singleValue then
+				-- flatten, just store as base type
+				lastEntry[propertyName] = parsedProperty.singleValue
+			else
+				-- store as table
+				lastEntry[propertyName] = parsedProperty
+				parsedProperty.name = nil -- avoid duplication
+			end
 
 		elseif line:match(PATTERN_ENTRY) then
 			-- This must match after _ENTRYPROPERTY, because ENTRY names may contain underscores

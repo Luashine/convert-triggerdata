@@ -36,6 +36,9 @@ end
 function valueRenamerLib.value()
 	return "value"
 end
+function valueRenamerLib.singleValue()
+	return "singleValue"
+end
 function valueRenamerLib.codeText()
 	return "codeText" -- same as "script text"
 end

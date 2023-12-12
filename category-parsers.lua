@@ -405,7 +405,7 @@ function category.Property_DisplayName.parseLine(line)
 	}
 
 	local valueRenamer = {
-		[1] = valueRenamerLib.value,
+		[1] = valueRenamerLib.singleValue,
 	}
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
@@ -448,7 +448,7 @@ function category.Property_UseWithAI.parseLine(line)
 	}
 
 	local valueRenamer = {
-		[1] = valueRenamerLib.value,
+		[1] = valueRenamerLib.singleValue,
 	}
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
