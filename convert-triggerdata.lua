@@ -21,7 +21,7 @@ function main(args)
 			:args("1+"):argname("<inifile.txt>"),
 
 		parser:option("-l --lang", "WE localization file for trigger string lookup, first file has highest priority")
-			:args("*"):argname("<strings.txt>"):action("concat"):hidden(true),
+			:args("*"):argname("<strings.txt>"):action("concat"),
 
 		parser:option("-t --type", "Choose the input data type")
 			:args(1):default("trigger")
