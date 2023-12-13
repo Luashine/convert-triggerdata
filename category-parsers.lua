@@ -338,6 +338,24 @@ category.DefaultTriggers = {}
 category.DefaultTriggers.parseLine = category.DefaultTriggerCategories.parseLine
 
 
+category.WorldEditStrings = {}
+function category.WorldEditStrings.parseLine(line)
+	local verificationRules = {
+		[1] = verificationRulesLib.acceptAny,
+	}
+
+	local valueProcessors = {
+		[1] = valueProcessorsLib.nop,
+	}
+
+	local valueRenamer = {
+		[1] = valueRenamerLib.singleValue,
+	}
+
+	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+end
+
+
 --- Advanced entries can have properties defined by a _Suffix. Rules for those
 property = {}
 property.Category = {}
