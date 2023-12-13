@@ -1,0 +1,3 @@
+[WorldEditStrings]
+WESTRING_VERYGOOD=Very Good
+WESTRING_lowercase=It's lower case

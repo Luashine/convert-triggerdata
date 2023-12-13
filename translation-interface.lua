@@ -4,13 +4,6 @@
 local TRANSLATION = {}
 local TFUNC = {}
 
-local indexThrowBecauseNil = function (tbl, key)
-	error("Key '".. key .."' not found in language table '".. tostring(tbl) .."'")
-end
-local mt_indexThrowOnNil = {
-	__index = indexThrowBecauseNil
-}
-
 function TRANSLATION:new(lang)
 	lang = lang or "default"
 
@@ -25,7 +18,7 @@ function TRANSLATION:new(lang)
 			if value then
 				return value
 			else
-				indexThrowBecauseNil(t, key)
+				return nil
 			end
 		end
 
@@ -33,7 +26,6 @@ function TRANSLATION:new(lang)
 
 	local languages = {}
 	newStorage.languages = languages
-	setmetatable(languages, mt_indexThrowOnNil)
 
 	newStorage:initLang(lang)
 
@@ -48,7 +40,6 @@ function TFUNC:initLang(lang)
 		local t = {
 			dataTables = {}
 		}
-		setmetatable(t, mt_indexThrowOnNil)
 		self.languages[lang] = t
 	end
 end
@@ -60,12 +51,13 @@ end
 
 --- Returns list containing data tables for language
 function TFUNC:getTablesLang(lang)
-	lang = lang or self:getDefaultLang()
+	lang = lang or self:getDefaultLangCode()
 	return self.languages[lang].dataTables
 end
 
 --- Translate a given stringId or returns it if not found
 function TFUNC:translate(stringId, lang)
+	assert(self, "you did not pass the self reference in translation, use :call syntax")
 	local dataTables = self:getTablesLang(lang)
 	local goodMatch
 
@@ -85,12 +77,13 @@ function TFUNC:translate(stringId, lang)
 
 	return goodMatch or stringId
 end
+TFUNC.tr = TFUNC.translate
 
 
 --- Adds another table to language lookup, first table added has highest lookup priority (FIFO)
 function TFUNC:addTranslationData(tbl, lang)
 	self:initLang(tbl, lang)
-	table.insert(self.dataTables, tbl)
+	table.insert(self:getTablesLang(), tbl)
 end
 
 return TRANSLATION
