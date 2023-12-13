@@ -352,7 +352,7 @@ function category.WorldEditStrings.parseLine(line)
 	setmetatable(verificationRules, mt_indexRemapper)
 
 	local valueProcessors = {
-		[1] = valueProcessorsLib.nop,
+		[1] = valueProcessorsLib.stripDoubleQuotes,
 		[2] = valueProcessorsLib.nop,
 	}
 	setmetatable(valueProcessors, mt_indexRemapper)

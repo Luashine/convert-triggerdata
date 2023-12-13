@@ -1,5 +1,61 @@
 require"category-parsers"
 
+local PATTERN_CATEGORY = "^%[([A-Za-z0-9]+)%]"
+local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
+local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
+
+function parseW3Ini(fileH, dataOut)
+	local categoryName = "ROOT_LEVEL"
+
+	local lineCount = 0
+
+	for line in fileH:lines() do
+		lineCount = lineCount + 1
+		if lineCount == 1 then
+			-- remove UTF-8 BOM
+			if line:sub(1, 3) == "\xEF\xBB\xBF" then
+				line = line:sub(4)
+			end
+		end
+		line = line:gsub("\r$", "")
+
+
+		if #line == 0 then
+			-- blank line
+
+		elseif line:match("^//") then
+			-- comment
+
+		elseif line:match(PATTERN_CATEGORY) then
+			-- category name
+
+			categoryName = line:match(PATTERN_CATEGORY)
+
+		elseif line:match(PATTERN_ENTRY) then
+			local entryName = line:match(PATTERN_ENTRY)
+
+			local parserTbl = assert(category[categoryName], string.format(
+				"Parser not found for category: '%s' on line: '%s'", tostring(entryName), line))
+
+			if not dataOut[categoryName] then dataOut[categoryName] = {} end
+
+			local definition = parserTbl.parseLine(line)
+			definition.name = nil -- stored as key
+
+			if definition.singleValue then
+				definition = definition.singleValue
+			end
+
+			dataOut[categoryName][entryName] = definition
+		else
+			error(string.format("Unknown line format, line: '%s', length: '%d' (invisible chars, BOM?)",
+				line, #line
+			))
+		end
+
+	end
+end
+
 local IGNORE_DOUBLE_DEFAULTS = {
 	["TriggerRegisterUnitInRangeSimple"] = true,
 	["SetTimeOfDayScalePercentBJ"] = true,
@@ -9,10 +65,6 @@ local IGNORE_DOUBLE_DEFAULTS = {
 	["BlzSetAbilityIntegerLevelField"] = true,
 }
 function parseFileTriggers(fileH, dataOut)
-	local PATTERN_CATEGORY = "^%[([A-Za-z0-9]+)%]"
-	local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
-	local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
-
 	local categoryName = "ROOT_LEVEL"
 	local lastEntry = nil
 

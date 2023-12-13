@@ -17,11 +17,15 @@ function main(args)
 		:require_command(false)
 
 	parser:group("Input data",
-		parser:argument("triggerdata", "Trigger definition file")
-			:args("1+"):argname("<triggerdata.txt>"),
+		parser:argument("datafiles", "Trigger definition or War3 INI file (depending on mode)")
+			:args("1+"):argname("<inifile.txt>"),
 
-		parser:option("-t --translate", "WE localization file, first file has highest priority")
-			:args("*"):argname("<strings.txt>"):action("concat"):hidden(true)
+		parser:option("-l --lang", "WE localization file for trigger string lookup, first file has highest priority")
+			:args("*"):argname("<strings.txt>"):action("concat"):hidden(true),
+
+		parser:option("-t --type", "Choose the input data type")
+			:args(1):default("trigger")
+			:choices({"trigger", "ini"})
 	)
 
 	parser:group("Output format",
@@ -32,7 +36,8 @@ function main(args)
 	)
 
 	local pargs = parser:parse(args)
-	local filePaths = pargs.triggerdata
+	local dataFiles = pargs.datafiles
+	local langFiles = pargs.lang
 
 	local data = {}
 
@@ -40,7 +45,17 @@ function main(args)
 		stderr("Reading file: ".. path, "\n")
 
 		local file = assert(io.open(path, "rb"))
-		parseFileTriggers(file, data)
+
+		if pargs.type == "trigger" then
+			parseFileTriggers(file, data)
+
+		elseif pargs.type == "ini" then
+			parseW3Ini(file, data)
+
+		else
+			error("Unknown command-line command")
+		end
+
 		file:close()
 	end
 
