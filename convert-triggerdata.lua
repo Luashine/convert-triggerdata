@@ -61,7 +61,7 @@ function main(args)
 		stderr("Reading file: ".. path, "\n")
 
 		local file = assert(io.open(path, "rb"))
-		parseFile(file, data)
+		parseFileTriggers(file, data)
 		file:close()
 	end
 

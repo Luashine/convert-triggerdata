@@ -1,6 +1,6 @@
 require"category-parsers"
 
-IGNORE_DOUBLE_DEFAULTS = {
+local IGNORE_DOUBLE_DEFAULTS = {
 	["TriggerRegisterUnitInRangeSimple"] = true,
 	["SetTimeOfDayScalePercentBJ"] = true,
 	["SetUnitLifeBJ"] = true,
@@ -8,7 +8,7 @@ IGNORE_DOUBLE_DEFAULTS = {
 	["CreateFogModifierRadiusLocBJ"] = true,
 	["BlzSetAbilityIntegerLevelField"] = true,
 }
-function parseFile(fileH, dataOut)
+function parseFileTriggers(fileH, dataOut)
 	local PATTERN_CATEGORY = "^%[([A-Za-z0-9]+)%]"
 	local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
 	local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
