@@ -16,8 +16,18 @@ function parseFile(fileH, dataOut)
 	local categoryName = "ROOT_LEVEL"
 	local lastEntry = nil
 
+	local lineCount = 0
+
 	for line in fileH:lines() do
+		lineCount = lineCount + 1
+		if lineCount == 1 then
+			-- remove UTF-8 BOM
+			if line:sub(1, 3) == "\xEF\xBB\xBF" then
+				line = line:sub(4)
+			end
+		end
 		line = line:gsub("\r$", "")
+
 
 		if #line == 0 then
 			-- blank line
@@ -134,7 +144,9 @@ function parseFile(fileH, dataOut)
 
 			lastEntry = parserTbl.parseLine(line)
 		else
-			error("Unknown line format, line: '".. line .."'")
+			error(string.format("Unknown line format, line: '%s', length: '%d' (invisible chars, BOM?)",
+				line, #line
+			))
 		end
 
 	end
