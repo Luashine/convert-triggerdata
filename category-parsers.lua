@@ -340,19 +340,36 @@ category.DefaultTriggers.parseLine = category.DefaultTriggerCategories.parseLine
 
 category.WorldEditStrings = {}
 function category.WorldEditStrings.parseLine(line)
+	local remapMin = 3
+	local remapMax = 100
+	local remapToIndex = 2
+	local mt_indexRemapper = {__index = metatblFactory_IndexRemapper(remapMin, remapMax, remapToIndex)}
+
 	local verificationRules = {
 		[1] = verificationRulesLib.acceptAny,
+		[2] = verificationRulesLib.acceptAny,
 	}
+	setmetatable(verificationRules, mt_indexRemapper)
 
 	local valueProcessors = {
 		[1] = valueProcessorsLib.nop,
+		[2] = valueProcessorsLib.nop,
 	}
+	setmetatable(valueProcessors, mt_indexRemapper)
 
 	local valueRenamer = {
 		[1] = valueRenamerLib.singleValue,
+		[2] = valueRenamerLib.argNumberedDefault,
 	}
+	setmetatable(valueRenamer, mt_indexRemapper)
 
-	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+	local def = parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
+
+	if def[2] then
+		stderr(string.format("Multiple values specified in translation file, I don't know what to do with them. Ignoring :\n   Line: %s\n", line))
+	end
+
+	return def
 end
 
 
