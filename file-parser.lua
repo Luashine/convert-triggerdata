@@ -61,31 +61,7 @@ function parseFileTriggers(fileH, dataOut)
 				line = "_BlzGetUnitCollisionSize_Category=TC_UNIT"
 			end
 
-			-- POSSIBLE PROPERTIES:
-
-			-- case-insensitive: _CATEGORY
-			-- _Category: single value, category ID
-
-			-- _Defaults: csv of default values in code or "_"
-
-			-- _Parameters: format-like text WITH function arguments, csv
-			-- example: _GetPlayerTechCountSimple_Parameters="Current research level of ",~Tech," for ",~Player
-			-- example: _GetPlayerUnitCount_Parameters="Count non-structure units controlled by ",~Player," (",~Include/Exclude," incomplete units)"
-			-- here, "Include/Exclude" are suffixes to be concatenated to construct the type with its pre-defined default boolean value
-
-			-- _DisplayName: single value, in double-quotes (but localization files do not have them sometimes)
-
-			-- _Limits: csv, used for integer/real limits. Two entries per argument
-			-- numbers are both inclusive, non-integer or "no limit" is denoted by an underscore _
-			-- may have a trailing comma (followed by nothing)
-			-- may have one or both limits (e.g. only minimal limit)
-
-			-- _ScriptName: I suppose this is the alias to be used in generated code
-			-- example: "_SetHeroLevel_ScriptName=SetHeroLevelBJ"
-
-			-- _UseWithAI: always used with a 1, so it must default to 0 if unspecified
-
-			-- _AIDefaults: apparently only applied in AI editor, while regular map triggers use _Defaults
+			-- See docs/README.md for format description
 			local PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX = "[^=]+_([^=]+)" -- todo: this should be simpler and based on previous full match name
 			local propertyName = line:match(PATTERN_MATCH_LAST_UNDERSCORE_SUFFIX)
 			if propertyName == "CATEGORY" then

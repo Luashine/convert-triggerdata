@@ -4,9 +4,62 @@ Reforged: Warcraft 3 defaults to UTF-8. Some files have BOM, other don't.
 
 `war3.w3mod/ui/` or `war3.w3mod/_locales/ruru.w3mod/ui/` or (legacy) `ui/`
 
+**Question:** Where are all the WESTRING_ located?
+**Answer:** `__LOCALE__/ui/worldeditstrings.txt`
+
+**Files:**
+
+- triggerdata.txt: main file containing all GUI triggers.
+- aieditordata.txt: GUI triggers as above but for AI Editor code generation
+
+- worldeditordata.txt: mostly localization, but gives many lists and hardcoded values a pretty name.
+- uniteditordata.txt: gives pretty names to unit data values. Mostly for object editor use.
+
+- miscui.txt: only useful for frame native users, should not be part of jassdoc but an outside tutorial
+- miscdata.txt: hardcoded constants, useful to derive some terminology
+
+- campaigninfoclassic.txt: defines constants and campaign missions, needs an outside tutorial
+- campaigninforeforged.txt: same as above
+
 ## triggerdata.txt and aieditordata.txt
 
 See "triggerdata-comments.txt"
+
+### Trigger data fields
+
+For general description and per section info see `triggerdata-comments.txt`
+
+Each category is to be parsed differently.
+
+"Entries" are keys that don't begin with `_`, they're the main object so to say
+
+"Properties" are keys that begin with `_`, they expand the main object's definition. The property name is a `..._Suffix` to the full entry name.
+
+Possible entry properties:
+
+- case-insensitive: `_CATEGORY` same as `_Category`
+- `_Category`: single value, category ID
+- `_Defaults`: csv of default values in code or `_`
+
+- `_Parameters`: multi-value, comma-separated. See INI format
+   - example: `_GetPlayerTechCountSimple_Parameters="Current research level of ",~Tech," for ",~Player`
+   - example: `_GetPlayerUnitCount_Parameters="Count non-structure units controlled by ",~Player," (",~Include/Exclude," incomplete units)"`
+      - here, `/Exclude` is a suffix to be concatenated to construct the type with its pre-defined default boolean value
+
+- `_DisplayName`: single value, in double-quotes (but localization files do not have them sometimes)
+
+- `_Limits`: multi-value csv, used for integer/real limits. Two entries per argument: `min,max`
+   - numbers are both inclusive, non-integer or "no limit" is denoted by an underscore `_`
+   - may have a trailing comma (followed by nothing)
+   - may have one or both limits (e.g. only minimal limit)
+
+- `_ScriptName`: I suppose this is the alias to be used in generated code
+   - example: `_SetHeroLevel_ScriptName=SetHeroLevelBJ`
+
+- `_UseWithAI`: always used with a 1, so it must default to 0 if unspecified
+
+- `_AIDefaults`: apparently only applied in AI editor, while regular map triggers use `_Defaults`
+
 
 ## chathelp-war3-<langcode>.txt
 
