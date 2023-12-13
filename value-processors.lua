@@ -33,7 +33,7 @@ end
 function valueProcessorsLib.translate(txt)
 	-- NEI!
 	if TRANSLATION then
-		return TRANSLATION.translate(txt)
+		return TRANSLATION:translate(txt)
 	else
 		return txt
 	end

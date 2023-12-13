@@ -39,9 +39,14 @@ function main(args)
 	local dataFiles = pargs.datafiles
 	local langFiles = pargs.lang
 
+	if #langFiles > 0 then
+		require"translation-manager"
+		loadTranslationFiles(langFiles) -- global TRANSLATION
+	end
+
 	local data = {}
 
-	for k, path in pairs(filePaths) do
+	for k, path in pairs(dataFiles) do
 		stderr("Reading file: ".. path, "\n")
 
 		local file = assert(io.open(path, "rb"))
