@@ -7,19 +7,23 @@ Reforged: Warcraft 3 defaults to UTF-8. Some files have BOM, other don't.
 **Question:** Where are all the WESTRING_ located?
 **Answer:** `__LOCALE__/ui/worldeditstrings.txt`
 
-**Files:**
+## Useful Files
 
 - triggerdata.txt: main file containing all GUI triggers.
 - aieditordata.txt: GUI triggers as above but for AI Editor code generation
+- triggerstrings.txt: only used to store GUI trigger hints
 
 - worldeditordata.txt: mostly localization, but gives many lists and hardcoded values a pretty name.
-- uniteditordata.txt: gives pretty names to unit data values. Mostly for object editor use.
+- uniteditordata.txt: gives pretty names to unit data values. Mostly for object editor use, **useful** for some native parameters
 
-- miscui.txt: only useful for frame native users, should not be part of jassdoc but an outside tutorial
-- miscdata.txt: hardcoded constants, useful to derive some terminology
+- miscui.txt: only useful for frame native users, some parts are **useful** for jassdoc, otherwise a separate tutorial
+- miscdata.txt: hardcoded constants, **useful** to derive some terminology and default values
 
-- campaigninfoclassic.txt: defines constants and campaign missions, needs an outside tutorial
+- campaigninfoclassic.txt: defines constants and campaign missions, needs an outside tutorial. Answers: "which campaign map is this?"
 - campaigninforeforged.txt: same as above
+
+- ui/worldeditdata.txt: mostly editor configuration, useful constants too like "Ally priority distances"
+- ui/worldeditlayout.txt: dynamic and easy UI configuration (years before Windows Forms!)
 
 ## triggerdata.txt and aieditordata.txt
 
