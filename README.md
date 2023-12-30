@@ -65,6 +65,23 @@ Versions I've checked:
 - 1.27-de: is English
 - 1.27-ru, tft: is English
 
+## Development: Architecture
+
+The current architecture is what I'd describe a "parametrized parser", essentially it's as close to a
+**declarative parser** as it can get while remaining easy to write.
+
+Each category is treated differently and has it's own parser function (which in turn only sets up the
+generalized parser with rules). The output is practically an object-oriented definition.
+
+- Generalized parser: `parseDefinition` in `category-parsers`
+- Category parser setup: `category` global, `category[ CategoryName ].parseLine`
+- Value verification rules: `verification-rules.lua`
+- Value processing (conversion): `value-processors.lua`
+- Fancy renaming of multiple values, according to type requirements: `value-renamers.lua`
+
+Because trigger parsing was written first (before any exploration of other formats, which turned out to be WC3 INI too),
+it turned out laser-focused on triggers only. A copy-pasted but simple `parseW3Ini` was separated in `file-parser.lua`.
+
 ## TODO
 
 ### Rewrite into separate entities
