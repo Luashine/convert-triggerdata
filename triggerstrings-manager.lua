@@ -47,6 +47,8 @@ function loadHintFiles(fileList)
 				-- else leave empty, do not overwrite
 
 			else
+				assert("do we actually expect a non-string hint definition? got: '".. tostring(hintDef) .."'")
+
 				local hasData = false
 				for _,_ in pairs(hintDef) do
 					hasData = true
