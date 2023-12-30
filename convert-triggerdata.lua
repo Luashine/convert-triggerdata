@@ -20,8 +20,11 @@ function main(args)
 		parser:argument("datafiles", "Trigger definition or War3 INI file (depending on mode)")
 			:args("1+"):argname("<inifile.txt>"),
 
-		parser:option("-l --lang", "WE localization file for trigger string lookup, first file has highest priority")
-			:args("*"):argname("<strings.txt>"):action("concat"),
+		parser:option("-l --lang", "WE worldeditstrings.txt localization file, first file has highest priority")
+			:args("*"):argname("<westrings.txt>"):action("concat"),
+
+		parser:option("--hint", "WE triggerstrings.txt explanation file, first file has highest priority")
+			:args("*"):argname("<trigstr.txt>"):action("concat"),
 
 		parser:option("-t --type", "Choose the input data type")
 			:args(1):default("trigger")
@@ -38,10 +41,18 @@ function main(args)
 	local pargs = parser:parse(args)
 	local dataFiles = pargs.datafiles
 	local langFiles = pargs.lang
+	local hintFiles = pargs.hint
 
 	if #langFiles > 0 then
 		require"translation-manager"
 		loadTranslationFiles(langFiles) -- global TRANSLATION
+	end
+
+	if #hintFiles > 0 then
+		require"triggerstrings-manager"
+		TRIGGERHINTS = loadHintFiles(hintFiles)
+	else
+		TRIGGERHINTS={} -- just have it return nil
 	end
 
 	local data = {}

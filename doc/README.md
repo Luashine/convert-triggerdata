@@ -66,6 +66,17 @@ Possible entry properties:
 - `_AIDefaults`: apparently only applied in AI editor, while regular map triggers use `_Defaults`
 
 
+## triggerstrings.txt
+
+**1.31, 1.32.0.13369, 1.32.10.18820 and older:** contains three lines per entry:
+
+1. Duplicated `FuncName_DisplayName`, same as in `triggerdata.txt`, but under key `FuncName`
+2. Duplicated `FuncName_Parameters`, same as in `triggerdata.txt`, but under key `FuncName`
+3. Unique `FuncNameHint` that contains the translated hint text.
+
+
+**Since 1.33.0.18857, 1.34.0.19572, 1.36.0.20144:** only contains `...Hint` entries.
+
 ## chathelp-war3-<langcode>.txt
 
 Same as: helpstrings.txt,

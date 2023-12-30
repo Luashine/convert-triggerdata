@@ -171,6 +171,11 @@ function parseFileTriggers(fileH, dataOut)
 				"Parser not found for category: '%s' on line: '%s'", tostring(categoryName), line))
 
 			lastEntry = parserTbl.parseLine(line)
+
+			local hintText = TRIGGERHINTS[ entryName .. "Hint" ]
+			if hintText then
+				lastEntry.hint = hintText
+			end
 		else
 			error(string.format("Unknown line format, line: '%s', length: '%d' (invisible chars, BOM?)",
 				line, #line
