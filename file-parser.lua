@@ -4,6 +4,14 @@ local PATTERN_CATEGORY = "^%[([A-Za-z0-9]+)%]"
 local PATTERN_ENTRY = "^[A-Za-z][A-Za-z0-9_]*"
 local PATTERN_ENTRYPROPERTY = "^_[A-Za-z0-9_]+"
 
+local function isBlank(line)
+	if line:find("%S") then
+		return false
+	else
+		return true
+	end
+end
+
 function parseW3Ini(fileH, dataOut)
 	local categoryName = "ROOT_LEVEL"
 
@@ -17,7 +25,7 @@ function parseW3Ini(fileH, dataOut)
 				line = line:sub(4)
 			end
 		end
-		line = line:gsub("\r$", "")
+		line = line:gsub("\r+$", "")
 
 
 		if #line == 0 then
@@ -47,9 +55,12 @@ function parseW3Ini(fileH, dataOut)
 			end
 
 			dataOut[categoryName][entryName] = definition
+
+		elseif isBlank(line) then
+			-- skip
 		else
-			error(string.format("Unknown line format, line: '%s', length: '%d' (invisible chars, BOM?)",
-				line, #line
+			error(string.format("Unknown line format, line #%d: '%s', length: '%d' (invisible chars, BOM?)",
+				lineCount, line, #line
 			))
 		end
 
@@ -78,7 +89,7 @@ function parseFileTriggers(fileH, dataOut)
 				line = line:sub(4)
 			end
 		end
-		line = line:gsub("\r$", "")
+		line = line:gsub("\r+$", "")
 
 
 		if #line == 0 then
@@ -176,9 +187,12 @@ function parseFileTriggers(fileH, dataOut)
 			if hintText then
 				lastEntry.hint = hintText
 			end
+
+		elseif isBlank(line) then
+			-- skip
 		else
-			error(string.format("Unknown line format, line: '%s', length: '%d' (invisible chars, BOM?)",
-				line, #line
+			error(string.format("Unknown line format, line #%d: '%s', length: '%d' (invisible chars, BOM?)",
+				lineCount, line, #line
 			))
 		end
 
