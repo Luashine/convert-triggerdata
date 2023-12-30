@@ -1,0 +1,8 @@
+// Assume this is a localized file in a non-English language
+
+[TriggerEventStrings]
+
+//MultilanguageFirstHint="Multilanguage this is the second language, not expected"
+MultilanguageSecondHint=Second lang expected
+MultilanguageSecondQuotedHint="Second lang expected quoted"
+

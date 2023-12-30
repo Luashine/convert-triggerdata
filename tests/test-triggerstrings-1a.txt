@@ -1,0 +1,26 @@
+// Assume this is the original English language
+
+[TriggerEventStrings]
+
+EmptyStringHint=
+EmptyStringQuotedHint=""
+
+StringHint=This is an example
+StringQuotedHint="This is a quoted example"
+
+MultilanguageFirstHint="Multilanguage first language expected"
+MultilanguageSecondHint=
+MultilanguageSecondQuotedHint=""
+
+[TriggerConditionStrings]
+ConditionsHint="Conditionsss"
+
+[TriggerActionStrings]
+ActionsHint="Actionsss"
+
+[TriggerCallStrings]
+CallsHint="Callsss"
+
+[AIFunctionStrings]
+AIFunctionsHint="AIFunctionsss"
+

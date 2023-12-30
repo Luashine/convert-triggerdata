@@ -339,6 +339,7 @@ category.DefaultTriggers.parseLine = category.DefaultTriggerCategories.parseLine
 
 
 category.WorldEditStrings = {}
+-- depended upon by category._TriggerHints.parseLine
 function category.WorldEditStrings.parseLine(line)
 	local remapMin = 3
 	local remapMax = 100
@@ -371,6 +372,16 @@ function category.WorldEditStrings.parseLine(line)
 
 	return def
 end
+
+
+--[[ Hint data aka triggerstrings.txt ]]
+
+category._TriggerHints = {}
+category.TriggerEventStrings     = category.WorldEditStrings
+category.TriggerConditionStrings = category.WorldEditStrings
+category.TriggerActionStrings    = category.WorldEditStrings
+category.TriggerCallStrings      = category.WorldEditStrings
+category.AIFunctionStrings       = category.WorldEditStrings
 
 
 --- Advanced entries can have properties defined by a _Suffix. Rules for those
