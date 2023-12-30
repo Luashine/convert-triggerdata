@@ -12,6 +12,7 @@ Reforged: Warcraft 3 defaults to UTF-8. Some files have BOM, other don't.
 - triggerdata.txt: main file containing all GUI triggers.
 - aieditordata.txt: GUI triggers as above but for AI Editor code generation
 - triggerstrings.txt: only used to store GUI trigger hints
+   - it's a simple INI structure (albeit multiple categories) where each `FunctionName` is called `FunctionNameHint` followed by a textual explanation.
 
 - worldeditordata.txt: mostly localization, but gives many lists and hardcoded values a pretty name.
 - uniteditordata.txt: gives pretty names to unit data values. Mostly for object editor use, **useful** for some native parameters
