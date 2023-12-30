@@ -386,8 +386,6 @@ category.AIFunctionStrings       = category.WorldEditStrings
 
 --- Advanced entries can have properties defined by a _Suffix. Rules for those
 property = {}
-property.Category = {}
-property.Category.parseLine = category.DefaultTriggerCategories.parseLine
 
 property.Defaults = {}
 function property.Defaults.parseLine(line)
@@ -414,6 +412,9 @@ function property.Defaults.parseLine(line)
 
 	return parseDefinition(line, verificationRules, valueProcessors, valueRenamer)
 end
+
+property.Category = {}
+property.Category.parseLine = property.Defaults.parseLine
 
 property.AIDefaults = {}
 property.AIDefaults.parseLine = property.Defaults.parseLine
