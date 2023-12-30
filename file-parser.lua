@@ -35,7 +35,7 @@ function parseW3Ini(fileH, dataOut)
 			local entryName = line:match(PATTERN_ENTRY)
 
 			local parserTbl = assert(category[categoryName], string.format(
-				"Parser not found for category: '%s' on line: '%s'", tostring(entryName), line))
+				"Parser not found for category: '%s' on line: '%s'", tostring(categoryName), line))
 
 			if not dataOut[categoryName] then dataOut[categoryName] = {} end
 
@@ -168,7 +168,7 @@ function parseFileTriggers(fileH, dataOut)
 			local entryName = line:match(PATTERN_ENTRY)
 
 			local parserTbl = assert(category[categoryName], string.format(
-				"Parser not found for category: '%s' on line: '%s'", tostring(entryName), line))
+				"Parser not found for category: '%s' on line: '%s'", tostring(categoryName), line))
 
 			lastEntry = parserTbl.parseLine(line)
 		else
